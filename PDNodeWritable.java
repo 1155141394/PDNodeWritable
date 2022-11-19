@@ -23,7 +23,7 @@ public class PDNodeWritable implements Writable {
     private IntWritable prev = new IntWritable(0);
     private MapWritable adjList = new MapWritable();
 
-    public BooleanWritable flag = new BooleanWritable(false);
+    public BooleanWritable flag = new BooleanWritable(true);
 
     public void PDNodeWritable() throws IOException {
         this.distance = new IntWritable(Integer.MAX_VALUE);
