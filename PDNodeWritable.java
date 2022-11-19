@@ -168,17 +168,21 @@ public class PDNodeWritable implements Writable {
 
 	boolean flag = Boolean.parseBoolean(all[2]);
         BooleanWritable flagWritable = new BooleanWritable(flag);
+    MapWritable mapWritable = new MapWritable();
+    if(all.length == 3)
+    {
+        Map<Integer,Integer> map = getStringToMap(all[3]);
 
-	Map<Integer,Integer> map = getStringToMap(all[3]); 
-	MapWritable mapWritable = new MapWritable();
 
-	for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-	        int key = entry.getKey();
-	        int value = entry.getValue();
-	        IntWritable keyWritable = new IntWritable(key);
-	        IntWritable valueWritable = new IntWritable(value);
-	        mapWritable.put(keyWritable, valueWritable);
-	}
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            int key = entry.getKey();
+            int value = entry.getValue();
+            IntWritable keyWritable = new IntWritable(key);
+            IntWritable valueWritable = new IntWritable(value);
+            mapWritable.put(keyWritable, valueWritable);
+        }
+    }
+
 	
 	this.distance = distanceWritable;
 	this.prev = prevWritable;
