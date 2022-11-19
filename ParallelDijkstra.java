@@ -104,7 +104,7 @@ public class ParallelDijkstra {
             PDNodeWritable node = new PDNodeWritable();
             long nid = (long)node.getByText(t);
             LongWritable nidWritable = new LongWritable(nid);
-            IntWritable d = value.getDistance();
+            IntWritable d = node.getDistance();
             if(d.get() != Integer.MAX_VALUE){
                 context.write(nidWritable, node);
             }
@@ -119,8 +119,8 @@ public class ParallelDijkstra {
         ) throws IOException, InterruptedException {
             PDNodeWritable node = values[0];
             IntWritable dist = node.getDistance();
-            IntWritable prev = getPrev();
-            res = key.toString() + " " + dist.toString() + " " + prev.toString();
+            IntWritable prev = node.getPrev();
+            String res = key.toString() + " " + dist.toString() + " " + prev.toString();
             Text resText = new Text(res);
             context.write(key, resText);
         }
