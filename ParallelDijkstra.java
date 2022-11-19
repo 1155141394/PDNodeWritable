@@ -117,12 +117,12 @@ public class ParallelDijkstra {
         public void reduce(LongWritable key, Iterable<PDNodeWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
-            PDNodeWritable node = values[0];
-            IntWritable dist = node.getDistance();
-            IntWritable prev = node.getPrev();
-            String res = key.toString() + " " + dist.toString() + " " + prev.toString();
-            Text resText = new Text(res);
-            context.write(key, resText);
+            for (PDNodeWritable node : values) {
+                IntWritable dist = node.getDistance();
+                IntWritable prev = node.getPrev();
+                String res = key.toString() + " " + dist.toString() + " " + prev.toString();
+                Text resText = new Text(res);
+                context.write(key, resText);
         }
     }
 
