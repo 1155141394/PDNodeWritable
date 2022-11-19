@@ -96,6 +96,36 @@ public class ParallelDijkstra {
         }
     }
 
+    public static class FinalResultMapper
+            extends Mapper<LongWritable, Text, LongWritable,PDNodeWritable>{
+
+        public void map(LongWritable key, Text t, Context context
+        ) throws IOException, InterruptedException {
+            PDNodeWritable node = new PDNodeWritable();
+            long nid = (long)node.getByText(t);
+            LongWritable nidWritable = new LongWritable(nid);
+            IntWritable d = value.getDistance();
+            if(d.get() != Integer.MAX_VALUE){
+                context.write(nidWritable, node);
+            }
+        }
+    }
+
+    public static class FinalResultReduce
+            extends Reducer<LongWritable,PDNodeWritable,LongWritable,Text> {
+
+        public void reduce(LongWritable key, Iterable<PDNodeWritable> values,
+                           Context context
+        ) throws IOException, InterruptedException {
+            PDNodeWritable node = values[0];
+            IntWritable dist = node.getDistance();
+            IntWritable prev = getPrev();
+            res = key.toString() + " " + dist.toString() + " " + prev.toString();
+            Text resText = new Text(res);
+            context.write(key, resText);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
 	String itr = args[3];
         Configuration conf1 = new Configuration();
@@ -157,7 +187,7 @@ public class ParallelDijkstra {
         	FileInputFormat.setInputPaths(job2,new Path("/user/hadoop/tmp/Output"+ i));
 		i++;
 		if(i == iteration){
-			FileOutputFormat.setOutputPath(job2, new Path(args[1]));
+			FileOutputFormat.setOutputPath(job2, new Path("/user/hadoop/tmp/Output" + i));
 		}else{
 			FileOutputFormat.setOutputPath(job2, new Path("/user/hadoop/tmp/Output" + i));
 		}
@@ -179,7 +209,21 @@ public class ParallelDijkstra {
         	}
 
 	}
+        Configuration conf3 = new Configuration();
+        Job job3 = Job.getInstance(conf3,"ReturnFinalResult");
+        job3.setJarByClass(ParallelDijkstra.class);
 
+        job2.setMapperClass(FinalResultMapper.class);
+        job2.setMapOutputKeyClass(LongWritable.class);
+        job2.setMapOutputValueClass(PDNodeWritable.class);
+
+        job2.setReducerClass(FinalResultReduce.class);
+        //设置reduce输出的key和value类型
+        job2.setOutputKeyClass(LongWritable.class);
+        job2.setOutputValueClass(Text.class);
+        FileInputFormat.addInputPath(job, new Path("/user/hadoop/tmp/Output" + iteration));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
 
 
     }
