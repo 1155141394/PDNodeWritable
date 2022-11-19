@@ -172,7 +172,7 @@ public class ParallelDijkstra {
         	while(true){
                 	if(jc.allFinished()){
                        		System.out.println(jc.getSuccessfulJobList());
-                       		//System.out.println(jc.getFailedJobList());
+                       		System.out.println(jc.getFailedJobList());
                        		jc.stop();
                        		break;
                 	}
