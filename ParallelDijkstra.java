@@ -213,17 +213,17 @@ public class ParallelDijkstra {
         Job job3 = Job.getInstance(conf3,"ReturnFinalResult");
         job3.setJarByClass(ParallelDijkstra.class);
 
-        job2.setMapperClass(FinalResultMapper.class);
-        job2.setMapOutputKeyClass(LongWritable.class);
-        job2.setMapOutputValueClass(PDNodeWritable.class);
+        job3.setMapperClass(FinalResultMapper.class);
+        job3.setMapOutputKeyClass(LongWritable.class);
+        job3.setMapOutputValueClass(PDNodeWritable.class);
 
-        job2.setReducerClass(FinalResultReduce.class);
+        job3.setReducerClass(FinalResultReduce.class);
         //设置reduce输出的key和value类型
-        job2.setOutputKeyClass(LongWritable.class);
-        job2.setOutputValueClass(Text.class);
-        FileInputFormat.addInputPath(job, new Path("/user/hadoop/tmp/Output" + iteration));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        job3.setOutputKeyClass(LongWritable.class);
+        job3.setOutputValueClass(Text.class);
+        FileInputFormat.addInputPath(job3, new Path("/user/hadoop/tmp/Output" + iteration));
+        FileOutputFormat.setOutputPath(job3, new Path(args[1]));
+        System.exit(job3.waitForCompletion(true) ? 0 : 1);
 
 
     }
