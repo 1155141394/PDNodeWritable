@@ -104,6 +104,7 @@ public class PDNodeWritable implements Writable {
             IntWritable count = (IntWritable) adjList.get(key);
             s = s + key.toString() + ":" + count.toString() + "," ;
         }
+        s = s + " ";
         result.append( distance.toString() + " " + prev.toString() + " " + flag.toString() + s );
         return result.toString();
 
@@ -156,7 +157,7 @@ public class PDNodeWritable implements Writable {
     public int getByText(Text t){
 	PDNodeWritable node = new PDNodeWritable();
 	String str = t.toString();
-	String[] all = str.split(" ");
+	String[] all = str.split("\\s+");
 	String[] nodeAndDist = all[0].split("\t");
 	int nid = Integer.parseInt(nodeAndDist[0]);
 	int distance = Integer.parseInt(nodeAndDist[1]);
