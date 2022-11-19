@@ -28,6 +28,7 @@ public class ParallelDijkstra {
 	    LongWritable nidWritable = new LongWritable(nid); 
             IntWritable d = value.getDistance();
 
+
             context.write(nidWritable, value);
             if(d.get() != Integer.MAX_VALUE){
                 MapWritable adjList = value.getAdjList();
@@ -44,9 +45,13 @@ public class ParallelDijkstra {
                     sum.set(d1+d2);
                     PDNodeWritable N = new PDNodeWritable();
                     BooleanWritable flag = new BooleanWritable(false);
-		    IntWritable seed = new IntWritable(0);
+		    IntWritable prevWritable = new IntWritable();
+                    int prev = (int)nidWritable.get();
+                    prevWritable.set(prev);
+
+
 		    MapWritable map = new MapWritable();
-                    N.set(sum, seed, map, flag);
+                    N.set(sum, prevWritable, map, flag);
 		    IntWritable tmpWritable = (IntWritable)node;
 		    int tmp = tmpWritable.get();
 		    LongWritable nodeWritable = new LongWritable((long)tmp);
