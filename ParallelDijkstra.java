@@ -70,9 +70,10 @@ public class ParallelDijkstra {
         ) throws IOException, InterruptedException {
             // Set max distance
             int dMin = Integer.MAX_VALUE;
+            IntWritable preID = new IntWritable();
             // Create a new PDNode to store the node info
             PDNodeWritable InfoNode = new PDNodeWritable();
-	    
+
             for (PDNodeWritable node : values) {
 		// Judge whether the node is node or dist
                 if(node.getFlag().get())
@@ -82,12 +83,14 @@ public class ParallelDijkstra {
                 if(node.getDistance().get() < dMin)
                 {
                     dMin = node.getDistance().get();
+                    preID = node.getPrev();
                 }
             }
 
             IntWritable finalDist = new IntWritable(dMin);
-	    
+
             InfoNode.setDistance(finalDist);
+            InfoNode.setPrev(preID);
 
             context.write(key, InfoNode);
         }
