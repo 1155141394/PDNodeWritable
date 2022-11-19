@@ -123,6 +123,7 @@ public class ParallelDijkstra {
                 String res = key.toString() + " " + dist.toString() + " " + prev.toString();
                 Text resText = new Text(res);
                 context.write(key, resText);
+            }
         }
     }
 
