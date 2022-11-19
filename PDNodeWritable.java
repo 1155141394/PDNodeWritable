@@ -104,7 +104,7 @@ public class PDNodeWritable implements Writable {
             IntWritable count = (IntWritable) adjList.get(key);
             s = s + key.toString() + ":" + count.toString() + "," ;
         }
-        s = s + " ";
+        s = s + " .";
         result.append( distance.toString() + " " + prev.toString() + " " + flag.toString() + s );
         return result.toString();
 
@@ -169,7 +169,7 @@ public class PDNodeWritable implements Writable {
 	boolean flag = Boolean.parseBoolean(all[2]);
         BooleanWritable flagWritable = new BooleanWritable(flag);
     MapWritable mapWritable = new MapWritable();
-    if(all.length == 3)
+    if(all[3] != ".")
     {
         Map<Integer,Integer> map = getStringToMap(all[3]);
 
