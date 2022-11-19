@@ -120,7 +120,7 @@ public class ParallelDijkstra {
             for (PDNodeWritable node : values) {
                 IntWritable dist = node.getDistance();
                 IntWritable prev = node.getPrev();
-                String res = key.toString() + " " + dist.toString() + " " + prev.toString();
+                String res = dist.toString() + " " + prev.toString();
                 Text resText = new Text(res);
                 context.write(key, resText);
             }
