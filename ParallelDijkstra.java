@@ -199,7 +199,7 @@ public class ParallelDijkstra {
 
         FileOutputFormat.setOutputPath(job2, new Path("/user/hadoop/tmp/Output" + i));
 
-        if(job2.getCounters().findCounter(ParallelDijkstra.ReachCounter.COUNT).getValue() == 0)
+        if(job2.getCounters().findCounter(ParallelReducer.ReachCounter.COUNT).getValue() == 0)
         {
             iterNum = i;
             break;
