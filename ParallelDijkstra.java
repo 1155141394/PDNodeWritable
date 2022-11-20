@@ -15,7 +15,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapred.Counters;
+import org.apache.hadoop.mapred.Counter;
 
 public class ParallelDijkstra {
     public static class ParallelMapper
