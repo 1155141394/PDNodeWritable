@@ -199,11 +199,6 @@ public class ParallelDijkstra {
 
         FileOutputFormat.setOutputPath(job2, new Path("/user/hadoop/tmp/Output" + i));
 
-        if(job2.getCounters().findCounter(ParallelReducer.ReachCounter.COUNT).getValue() == 0)
-        {
-            iterNum = i;
-            break;
-        }
 
         ControlledJob cjob2 = new ControlledJob(conf2);
 
@@ -220,6 +215,12 @@ public class ParallelDijkstra {
                         jc.stop();
                         break;
                 }
+        }
+
+        if(job2.getCounters().findCounter(ParallelReducer.ReachCounter.COUNT).getValue() == 0)
+        {
+            iterNum = i;
+            break;
         }
 
 	}
