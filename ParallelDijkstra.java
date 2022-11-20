@@ -93,7 +93,7 @@ public class ParallelDijkstra {
             }
 
             IntWritable finalDist = new IntWritable(dMin);
-            if(InfoNode.getDistance() != finalDist)
+            if(InfoNode.getDistance().get() != finalDist.get())
             {
                 InfoNode.setDistance(finalDist);
                 InfoNode.setPrev(preID);
