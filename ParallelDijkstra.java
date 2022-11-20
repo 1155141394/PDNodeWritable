@@ -65,7 +65,7 @@ public class ParallelDijkstra {
     public static class ParallelReducer
             extends Reducer<LongWritable,PDNodeWritable,LongWritable,PDNodeWritable> {
         public static enum ReachCounter { COUNT };
-        Counter counter = context.getCounter(ReachCounter.COUNT);
+        private Counter counter = context.getCounter(ReachCounter.COUNT);
         private long one = 1;
         private long zero = 0;
         counter.setValue(zero);
