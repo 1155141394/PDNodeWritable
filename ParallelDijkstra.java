@@ -72,7 +72,7 @@ public class ParallelDijkstra {
         public void reduce(LongWritable key, Iterable<PDNodeWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
-            Counters counter = context.getCounter(ReachCounter.COUNT);
+            Counter counter = context.getCounter(ReachCounter.COUNT);
             // Set max distance
             int dMin = Integer.MAX_VALUE;
             IntWritable preID = new IntWritable();
