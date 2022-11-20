@@ -68,7 +68,7 @@ public class ParallelDijkstra {
         private Counter counter = context.getCounter(ReachCounter.COUNT);
         private long one = 1;
         private long zero = 0;
-        counter.setValue(zero);
+//        counter.setValue(zero);
         public void reduce(LongWritable key, Iterable<PDNodeWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
