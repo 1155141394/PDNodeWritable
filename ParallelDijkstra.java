@@ -64,7 +64,8 @@ public class ParallelDijkstra {
 
     public static class ParallelReducer
             extends Reducer<LongWritable,PDNodeWritable,LongWritable,PDNodeWritable> {
-
+        public static enum ReachCounter { COUNT };
+        context.getCounter(ReachCounter.COUNT).setValue(0);
         public void reduce(LongWritable key, Iterable<PDNodeWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
@@ -88,9 +89,12 @@ public class ParallelDijkstra {
             }
 
             IntWritable finalDist = new IntWritable(dMin);
-
-            InfoNode.setDistance(finalDist);
-            InfoNode.setPrev(preID);
+            if(InfoNode.getDistance() != finalDist)
+            {
+                InfoNode.setDistance(finalDist);
+                InfoNode.setPrev(preID);
+                context.getCounter(ReachCounter.COUNT).increment(1);
+            }
 
             context.write(key, InfoNode);
         }
@@ -170,44 +174,49 @@ public class ParallelDijkstra {
 	}
 	int i = 0;
 	int iteration = Integer.parseInt(itr);
+    int iterNum = 0;
 	while(i < iteration){
 		Configuration conf2 = new Configuration();
-        	Job job2 = Job.getInstance(conf2,"Parallel");
+        Job job2 = Job.getInstance(conf2,"Parallel");
 
-        	job2.setJarByClass(ParallelDijkstra.class);
+        job2.setJarByClass(ParallelDijkstra.class);
 
-        	job2.setMapperClass(ParallelMapper.class);
-        	job2.setMapOutputKeyClass(LongWritable.class);
-        	job2.setMapOutputValueClass(PDNodeWritable.class);
+        job2.setMapperClass(ParallelMapper.class);
+        job2.setMapOutputKeyClass(LongWritable.class);
+        job2.setMapOutputValueClass(PDNodeWritable.class);
 
-        	job2.setReducerClass(ParallelReducer.class);
-        	//设置reduce输出的key和value类型
-        	job2.setOutputKeyClass(LongWritable.class);
-        	job2.setOutputValueClass(PDNodeWritable.class);
+        job2.setReducerClass(ParallelReducer.class);
+        //设置reduce输出的key和value类型
+        job2.setOutputKeyClass(LongWritable.class);
+        job2.setOutputValueClass(PDNodeWritable.class);
 
-        	FileInputFormat.setInputPaths(job2,new Path("/user/hadoop/tmp/Output"+ i));
+        FileInputFormat.setInputPaths(job2,new Path("/user/hadoop/tmp/Output"+ i));
 		i++;
-		if(i == iteration){
-			FileOutputFormat.setOutputPath(job2, new Path("/user/hadoop/tmp/Output" + i));
-		}else{
-			FileOutputFormat.setOutputPath(job2, new Path("/user/hadoop/tmp/Output" + i));
-		}
-        	ControlledJob cjob2 = new ControlledJob(conf2);
 
-        	cjob2.setJob(job2);
-        	jc = new JobControl("Parallel");
-        	jc.addJob(cjob2);
+        FileOutputFormat.setOutputPath(job2, new Path("/user/hadoop/tmp/Output" + i));
 
-        	jcThread = new Thread(jc);
-        	jcThread.start();
-        	while(true){
-                	if(jc.allFinished()){
-                       		System.out.println(jc.getSuccessfulJobList());
-                       		System.out.println(jc.getFailedJobList());
-                       		jc.stop();
-                       		break;
-                	}
-        	}
+        if(job.getCounters().findCounter(ParallelDijkstra.ReachCounter.COUNT).getValue() == 0)
+        {
+            iterNum = i;
+            break;
+        }
+
+        ControlledJob cjob2 = new ControlledJob(conf2);
+
+        cjob2.setJob(job2);
+        jc = new JobControl("Parallel");
+        jc.addJob(cjob2);
+
+        jcThread = new Thread(jc);
+        jcThread.start();
+        while(true){
+                if(jc.allFinished()){
+                        System.out.println(jc.getSuccessfulJobList());
+                        System.out.println(jc.getFailedJobList());
+                        jc.stop();
+                        break;
+                }
+        }
 
 	}
         Configuration conf3 = new Configuration();
