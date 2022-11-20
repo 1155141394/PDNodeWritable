@@ -65,13 +65,14 @@ public class ParallelDijkstra {
     public static class ParallelReducer
             extends Reducer<LongWritable,PDNodeWritable,LongWritable,PDNodeWritable> {
         public static enum ReachCounter { COUNT };
-        private Counter counter = context.getCounter(ReachCounter.COUNT);
-        private long one = 1;
-        private long zero = 0;
+//        private Counter counter = context.getCounter(ReachCounter.COUNT);
+//        private long one = 1;
+//        private long zero = 0;
 //        counter.setValue(zero);
         public void reduce(LongWritable key, Iterable<PDNodeWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
+            Counter counter = context.getCounter(ReachCounter.COUNT);
             // Set max distance
             int dMin = Integer.MAX_VALUE;
             IntWritable preID = new IntWritable();
