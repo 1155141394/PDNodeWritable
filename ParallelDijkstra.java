@@ -65,7 +65,8 @@ public class ParallelDijkstra {
     public static class ParallelReducer
             extends Reducer<LongWritable,PDNodeWritable,LongWritable,PDNodeWritable> {
         public static enum ReachCounter { COUNT };
-        context.getCounter(ReachCounter.COUNT).setValue(0);
+        Counter counter = context.getCounter(ReachCounter.COUNT);
+        counter.setValue(0);
         public void reduce(LongWritable key, Iterable<PDNodeWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
@@ -93,7 +94,7 @@ public class ParallelDijkstra {
             {
                 InfoNode.setDistance(finalDist);
                 InfoNode.setPrev(preID);
-                context.getCounter(ReachCounter.COUNT).increment(1);
+                counter.increment(1);
             }
 
             context.write(key, InfoNode);
