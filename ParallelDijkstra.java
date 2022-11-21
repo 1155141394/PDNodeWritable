@@ -179,8 +179,8 @@ public class ParallelDijkstra {
 	int i = 0;
 	int iteration = Integer.parseInt(itr);
     int iterNum = 0;
-	while(i < iteration){
-		Configuration conf2 = new Configuration();
+
+        Configuration conf2 = new Configuration();
         Job job2 = Job.getInstance(conf2,"Parallel");
 
         job2.setJarByClass(ParallelDijkstra.class);
@@ -188,12 +188,13 @@ public class ParallelDijkstra {
         job2.setMapperClass(ParallelMapper.class);
         job2.setMapOutputKeyClass(LongWritable.class);
         job2.setMapOutputValueClass(PDNodeWritable.class);
-
+        job2.setCombinerClass(ParallelReducer.class);
         job2.setReducerClass(ParallelReducer.class);
         //设置reduce输出的key和value类型
         job2.setOutputKeyClass(LongWritable.class);
         job2.setOutputValueClass(PDNodeWritable.class);
 
+	while(i < iteration){
         FileInputFormat.setInputPaths(job2,new Path("/user/hadoop/tmp/Output"+ i));
 		i++;
 
