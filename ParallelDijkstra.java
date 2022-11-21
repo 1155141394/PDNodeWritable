@@ -188,7 +188,7 @@ public class ParallelDijkstra {
         job2.setMapperClass(ParallelMapper.class);
         job2.setMapOutputKeyClass(LongWritable.class);
         job2.setMapOutputValueClass(PDNodeWritable.class);
-        job2.setCombinerClass(ParallelReducer.class);
+//        job2.setCombinerClass(ParallelReducer.class);
         job2.setReducerClass(ParallelReducer.class);
         //设置reduce输出的key和value类型
         job2.setOutputKeyClass(LongWritable.class);
