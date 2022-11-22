@@ -24,9 +24,9 @@ public class ParallelDijkstra {
         public void map(LongWritable key, Text t, Context context
         ) throws IOException, InterruptedException {
 	    PDNodeWritable value = new PDNodeWritable();
-    	    long nid = (long)value.getByText(t);	   
+    	    long nid = value.getByText(t);
 	    LongWritable nidWritable = new LongWritable(nid); 
-            IntWritable d = value.getDistance();
+            LongWritable d = value.getDistance();
 
 
             context.write(nidWritable, value);
@@ -36,25 +36,23 @@ public class ParallelDijkstra {
                 Set<Writable> nodes = adjList.keySet();
                 for (Writable node : nodes) {
                     // d1 上一个点的距离
-                    int d1 = d.get();
-		    IntWritable d2Writable = (IntWritable)adjList.get(node);
+                    long d1 = d.get();
+		    LongWritable d2Writable = (LongWritable)adjList.get(node);
                     // d2 上一个点到node的距离
-                    int d2 = d2Writable.get();
+                    long d2 = d2Writable.get();
                     // sum node的距离
-                    IntWritable sum = new IntWritable();
+                    LongWritable sum = new LongWritable();
                     sum.set(d1+d2);
                     PDNodeWritable N = new PDNodeWritable();
                     BooleanWritable flag = new BooleanWritable(false);
-		    IntWritable prevWritable = new IntWritable();
-                    int prev = (int)nidWritable.get();
-                    prevWritable.set(prev);
+
+                    long prev = nidWritable.get();
+		    LongWritable prevWritable = new LongWritable(prev);
 
 
 		    MapWritable map = new MapWritable();
                     N.set(sum, prevWritable, map, flag);
-		    IntWritable tmpWritable = (IntWritable)node;
-		    int tmp = tmpWritable.get();
-		    LongWritable nodeWritable = new LongWritable((long)tmp);
+		    LongWritable nodeWritable = (LongWritable)node;
                     context.write(nodeWritable, N);
 		    
                 }
@@ -74,8 +72,8 @@ public class ParallelDijkstra {
         ) throws IOException, InterruptedException {
             Counter counter = context.getCounter(ReachCounter.COUNT);
             // Set max distance
-            int dMin = Integer.MAX_VALUE;
-            IntWritable preID = new IntWritable();
+            long dMin = Long.MAX_VALUE;
+            LongWritable preID = new LongWritable();
             // Create a new PDNode to store the node info
             PDNodeWritable InfoNode = new PDNodeWritable();
 
@@ -92,7 +90,7 @@ public class ParallelDijkstra {
                 }
             }
 
-            IntWritable finalDist = new IntWritable(dMin);
+            LongWritable finalDist = new LongWritable(dMin);
             if(InfoNode.getDistance().get() != finalDist.get())
             {
                 InfoNode.setDistance(finalDist);
@@ -110,10 +108,10 @@ public class ParallelDijkstra {
         public void map(LongWritable key, Text t, Context context
         ) throws IOException, InterruptedException {
             PDNodeWritable node = new PDNodeWritable();
-            long nid = (long)node.getByText(t);
+            long nid = node.getByText(t);
             LongWritable nidWritable = new LongWritable(nid);
-            IntWritable d = node.getDistance();
-            if(d.get() != Integer.MAX_VALUE){
+            LongWritable d = node.getDistance();
+            if(d.get() != Long.MAX_VALUE){
                 context.write(nidWritable, node);
             }
         }
@@ -126,8 +124,8 @@ public class ParallelDijkstra {
                            Context context
         ) throws IOException, InterruptedException {
             for (PDNodeWritable node : values) {
-                IntWritable dist = node.getDistance();
-                IntWritable prev = node.getPrev();
+                LongWritable dist = node.getDistance();
+                LongWritable prev = node.getPrev();
                 String res = dist.toString() + " " + prev.toString();
                 Text resText = new Text(res);
                 context.write(key, resText);
@@ -146,13 +144,13 @@ public class ParallelDijkstra {
         //设置Mapper组件类
         job1.setMapperClass(PDPreProcess.PDPreProMapper.class);
         //设置mapper的输出key类型
-        job1.setMapOutputKeyClass(IntWritable.class);
+        job1.setMapOutputKeyClass(LongWritable.class);
         //设置Mappper的输出value类型，注意Text的导包问题
         job1.setMapOutputValueClass(MapWritable.class);
         //设置reduce组件类
         job1.setReducerClass(PDPreProcess.PDPreProReducer.class);
         //设置reduce输出的key和value类型
-        job1.setOutputKeyClass(IntWritable.class);
+        job1.setOutputKeyClass(LongWritable.class);
         job1.setOutputValueClass(PDNodeWritable.class);
         //设置输入路径
         FileInputFormat.setInputPaths(job1, new Path(args[0]));

@@ -19,31 +19,31 @@ import org.apache.hadoop.classification.InterfaceStability;
 
 public class PDNodeWritable implements Writable {
     // Some data
-    private IntWritable distance = new IntWritable(Integer.MAX_VALUE);
-    private IntWritable prev = new IntWritable(0);
+    private LongWritable distance = new LongWritable(Long.MAX_VALUE);
+    private LongWritable prev = new LongWritable(0);
     private MapWritable adjList = new MapWritable();
 
     public BooleanWritable flag = new BooleanWritable(true);
 
     public void PDNodeWritable() throws IOException {
-        this.distance = new IntWritable(Integer.MAX_VALUE);
-        this.prev = new IntWritable(0);
+        this.distance = new LongWritable(Long.MAX_VALUE);
+        this.prev = new LongWritable(0);
         this.adjList = new MapWritable();
         this.flag = new BooleanWritable(true);
     }
 
-    public void set (IntWritable distance, IntWritable prev, MapWritable adjList, BooleanWritable flag){
+    public void set (LongWritable distance, LongWritable prev, MapWritable adjList, BooleanWritable flag){
         this.distance = distance;
         this.prev = prev;
         this.adjList = adjList;
         this.flag = flag;
     }
 
-    public void setDistance(IntWritable distance){
+    public void setDistance(LongWritable distance){
         this.distance = distance;
     }
 
-    public void setPrev(IntWritable prev){
+    public void setPrev(LongWritable prev){
         this.prev = prev;
     }
 
@@ -56,7 +56,7 @@ public class PDNodeWritable implements Writable {
     }
 
 
-    public IntWritable getDistance() {
+    public LongWritable getDistance() {
         return this.distance;
     }
 
@@ -64,7 +64,7 @@ public class PDNodeWritable implements Writable {
         return this.adjList;
     }
 
-    public IntWritable getPrev(){
+    public LongWritable getPrev(){
         return this.prev;
     }
 
@@ -94,14 +94,14 @@ public class PDNodeWritable implements Writable {
 
     public String toString() {
         StringBuilder result = new StringBuilder();
-        IntWritable distance = this.distance;
-        IntWritable prev = this.prev;
+        LongWritable distance = this.distance;
+        LongWritable prev = this.prev;
         MapWritable adjList = this.adjList;
         BooleanWritable flag = this.flag;
         String s = new String(" ");
         Set<Writable> keys = adjList.keySet();
         for (Writable key : keys) {
-            IntWritable count = (IntWritable) adjList.get(key);
+            LongWritable count = (LongWritable) adjList.get(key);
             s = s + key.toString() + ":" + count.toString() + "," ;
         }
         s = s + " ";
@@ -112,14 +112,14 @@ public class PDNodeWritable implements Writable {
 
     public String toString(LongWritable nid) {
         StringBuilder result = new StringBuilder();
-        IntWritable distance = this.distance;
-        IntWritable prev = this.prev;
+        LongWritable distance = this.distance;
+        LongWritable prev = this.prev;
         MapWritable adjList = this.adjList;
         BooleanWritable flag = this.flag;
         String s = new String(" ");
         Set<Writable> keys = adjList.keySet();
         for (Writable key : keys) {
-            IntWritable count = (IntWritable) adjList.get(key);
+            LongWritable count = (LongWritable) adjList.get(key);
             s = s + key.toString() + ":" + count.toString() + "," ;
         }
         s = s + " ";
@@ -137,59 +137,59 @@ public class PDNodeWritable implements Writable {
     }
     	    
 
-    public static Map<Integer,Integer> getStringToMap(String str){
+    public static Map<Long,Long> getStringToMap(String str){
 	String[] str1 = str.split(",");
 	//创建Map对象
-	Map<Integer,Integer> map = new HashMap<>();
+	Map<Long,Long> map = new HashMap<>();
 	//循环加入map集合
 	for (int i = 0; i < str1.length; i++) {
 		//根据":"截取字符串数组
 		String[] str2 = str1[i].split(":");
 		//str2[0]为KEY,str2[1]为值
-		int int1 = Integer.parseInt(str2[0]);
-		int int2 = Integer.parseInt(str2[1]);
+		long int1 = Long.parseLong(str2[0]);
+		long int2 = Long.parseLong(str2[1]);
 		map.put(int1,int2);
         }
         return map;
     }
 
 
-    public int getByText(Text t){
+    public Long getByText(Text t){
 	PDNodeWritable node = new PDNodeWritable();
 	String str = t.toString();
 	String[] all = str.trim().split(" ");
 	String[] nodeAndDist = all[0].split("\t");
-	int nid = Integer.parseInt(nodeAndDist[0]);
-	int distance = Integer.parseInt(nodeAndDist[1]);
-	IntWritable distanceWritable = new IntWritable(distance);
+	long nid = Long.parseLong(nodeAndDist[0]);
+	Long distance = Long.parseLong(nodeAndDist[1]);
+	LongWritable distanceWritable = new LongWritable(distance);
 
-	int prev = Integer.parseInt(all[1]);
-        IntWritable prevWritable = new IntWritable(prev);
+	long prev = Long.parseLong(all[1]);
+        LongWritable prevWritable = new LongWritable(prev);
 
 	boolean flag = Boolean.parseBoolean(all[2]);
         BooleanWritable flagWritable = new BooleanWritable(flag);
     MapWritable mapWritable = new MapWritable();
     if(all.length == 4)
     {
-        Map<Integer,Integer> map = getStringToMap(all[3]);
+        Map<Long,Long> map = getStringToMap(all[3]);
 
 
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            int key = entry.getKey();
-            int value = entry.getValue();
-            IntWritable keyWritable = new IntWritable(key);
-            IntWritable valueWritable = new IntWritable(value);
+        for (Map.Entry<Long, Long> entry : map.entrySet()) {
+            long key = entry.getKey();
+            long value = entry.getValue();
+            LongWritable keyWritable = new LongWritable(key);
+            LongWritable valueWritable = new LongWritable(value);
             mapWritable.put(keyWritable, valueWritable);
         }
     }
 
-	
+
 	this.distance = distanceWritable;
 	this.prev = prevWritable;
 	this.adjList = mapWritable;
 	this.flag = flagWritable;
         return nid;
-   
+
     }
 
 
