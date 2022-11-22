@@ -178,7 +178,6 @@ public class ParallelDijkstra {
 	int iteration = Integer.parseInt(itr);
     int iterNum = 0;
 
-	while(i < iteration){
         Configuration conf2 = new Configuration();
         Job job2 = Job.getInstance(conf2,"Parallel");
 
@@ -193,6 +192,7 @@ public class ParallelDijkstra {
         job2.setOutputKeyClass(LongWritable.class);
         job2.setOutputValueClass(PDNodeWritable.class);
 
+	while(i < iteration){
         FileInputFormat.setInputPaths(job2,new Path("/user/hadoop/tmp/Output"+ i));
 		i++;
 
